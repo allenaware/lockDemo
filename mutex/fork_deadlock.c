@@ -10,7 +10,7 @@ void* another(void* arg){
     printf("in child thread, lock the mutex\n");
     pthread_mutex_lock(&mutex);
     sleep(5);
-    pthread_mutex_unlock(&mutex);;
+    pthread_mutex_unlock(&mutex);
 }
 
 int main ( int argc, char **argv)
@@ -38,7 +38,7 @@ int main ( int argc, char **argv)
    else{
        wait(NULL);
    }
-   pthread_join( id, NULL )；
+   pthread_join( id, NULL );
    pthread_mutex_destroy( &mutex );
    return 0;
 }
