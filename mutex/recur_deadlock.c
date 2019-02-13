@@ -31,9 +31,9 @@ void * thread_func_two(void *arg)
 }
 int main ( int argc, char **argv)
 {
-//pthread_mutexattr_init(&attr);
-//pthread_mutexattr_settype(&attr,PTHREAD_MUTEX_RECURSIVE);
-//pthread_mutex_init(&mutex1,&attr);
+  pthread_mutexattr_init(&attr);
+  pthread_mutexattr_settype(&attr,PTHREAD_MUTEX_RECURSIVE);
+  pthread_mutex_init(&mutex1,&attr);
   pthread_t thread_one, thread_two;
   if( 0!=pthread_create( &thread_one, NULL, thread_func_one,NULL)){
       printf("pthread create failed!\n");
