@@ -5,10 +5,9 @@ int count = 0;
 void * thread_func_one(void *arg)
 {
    int i;
-   for(i=0;i<10;i++){
+   for(i=0;i<100;i++){
      pthread_mutex_lock( &mutex1);
      count++;
-     sleep(1);
      printf("thread one count value is %d\n",count);
      pthread_mutex_unlock(&mutex1);
    }
@@ -17,7 +16,7 @@ void * thread_func_one(void *arg)
 void * thread_func_two(void *arg)
 {
    int i;
-   for(i=0;i<10;i++){
+   for(i=0;i<100;i++){
      pthread_mutex_lock( &mutex1);
      count++;
      sleep(1);
@@ -37,7 +36,9 @@ int main ( int argc, char **argv)
       printf("pthread create failed!\n");
       return -1;
    }
+   printf("wait thread one!\n");
    pthread_join(thread_one, NULL);
+   printf("wait thread two!\n");
    pthread_join(thread_two,NULL);
    return 0;
 }

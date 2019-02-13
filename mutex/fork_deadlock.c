@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include <wait.h>
 
 pthread_mutex_t mutex;
 
@@ -36,7 +35,7 @@ int main ( int argc, char **argv)
        exit(0);
    }
    else{
-       wait(NULL);
+       sleep(10);
    }
    pthread_join( id, NULL );
    pthread_mutex_destroy( &mutex );
