@@ -2,13 +2,14 @@
 #include <stdio.h>
 pthread_mutex_t mutex1 = PTHREAD_MUTEX_INITIALIZER;
 int count = 0;
+int TOTAL =100000000;
 void * thread_func_one(void *arg)
 {
    int i;
-   for(i=0;i<10000;i++){
+   for(i=0;i<TOTAL;i++){
      pthread_mutex_lock( &mutex1);
      count++;
-     printf("thread one count value is %d\n",count);
+//     printf("thread one count value is %d\n",count);
      pthread_mutex_unlock(&mutex1);
    }
    return NULL;
@@ -16,10 +17,10 @@ void * thread_func_one(void *arg)
 void * thread_func_two(void *arg)
 {
    int i;
-   for(i=0;i<10000;i++){
+   for(i=0;i<TOTAL;i++){
      pthread_mutex_lock( &mutex1);
      count++;
-     printf("thread two count value is %d\n",count);
+ //    printf("thread two count value is %d\n",count);
      pthread_mutex_unlock(&mutex1);
    }
    return NULL;
