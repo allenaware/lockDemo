@@ -3,8 +3,8 @@
 #include <pthread.h>
 #include <semaphore.h>
 #define NUM 5 
-#define PRODUCER_NUM 1 
-#define CONSUMER_NUM 1 
+#define PRODUCER_NUM 3 
+#define CONSUMER_NUM 3 
 pthread_mutex_t m1,m2;
 sem_t sem_con, sem_pro;
 int goods =0;
@@ -17,10 +17,10 @@ void *producer(void *argv)
 		goods++;
         int sem_number;
         sem_getvalue(&sem_pro,&sem_number);
-		printf("producer thread id: %d goods number: %d sem number: %d\n",(unsigned int)pthread_self(),goods,sem_number);
+		printf("producer thread id: %lu goods number: %d sem number: %d\n",pthread_self(),goods,sem_number);
 		pthread_mutex_unlock(&m1);
-		sleep(1);
 		sem_post(&sem_con);
+		sleep(rand()%5+1);
 	}
 }
 void *consumer(void *argv)
@@ -32,10 +32,10 @@ void *consumer(void *argv)
 		goods--;
         int sem_number;
         sem_getvalue(&sem_con,&sem_number);
-		printf("consumer thread id: %d goods number: %d sem number: %d\n",(unsigned int)pthread_self(),goods,sem_number);
+		printf("consumer thread id: %lu goods number: %d sem number: %d\n",pthread_self(),goods,sem_number);
 		pthread_mutex_unlock(&m2);
-		sleep(5);
 		sem_post(&sem_pro);
+		sleep(rand()%5+1);
 	}
 }
 int main(void)
