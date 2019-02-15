@@ -2,56 +2,59 @@
 #include <unistd.h>
 #include <pthread.h>
 #include <semaphore.h>
-#define NUM 5
-pthread_mutex_t m1, m2;
-sem_t blank_num, product_num;
-int goods,k;
+#define NUM 2 
+#define PRODUCER_NUM 3 
+#define CONSUMER_NUM 4 
+pthread_mutex_t m1,m2;
+sem_t sem_con, sem_pro;
+int goods =0;
 void *producer(void *argv)
 {
 	while (1)
 	{
-		sem_wait(&blank_num);
+		sem_wait(&sem_pro);
 		pthread_mutex_lock(&m1);
 		goods++;
-		printf("produce %d\n", goods);
+		printf("producer thread id: %d goods number %d\n",(unsigned int)pthread_self(),goods);
 		pthread_mutex_unlock(&m1);
-		sem_post(&product_num);
-		sleep(rand() % 2);
+		sem_post(&sem_con);
+		sleep(2);
 	}
 }
-void *comsumer(void *argv)
+void *consumer(void *argv)
 {
 	while (1)
 	{
-		sem_wait(&product_num);
+		sem_wait(&sem_con);
 		pthread_mutex_lock(&m2);
-		goods--;
-		printf("comsume %d \n", goods);
+		goods++;
+		printf("consumer thread id: %d goods number %d\n",(unsigned int)pthread_self(),goods);
 		pthread_mutex_unlock(&m2);
-		sem_post(&blank_num);
-		sleep(rand() % 2);
+		sem_post(&sem_pro);
+		sleep(2);
 	}
 }
 int main(void)
 {
-	goods = k = 0;
 	//初始化信号量及互斥量
-	sem_init(&blank_num, 0, NUM);
-	sem_init(&product_num, 0, 0);
+	sem_init(&sem_pro, 0, NUM);
+	sem_init(&sem_con, 0, 0);
 	pthread_mutex_init(&m1, NULL);
 	pthread_mutex_init(&m2, NULL);
-	pthread_t pro[2], com[3];
-	for (k = 0; k < 3; k++)
-		pthread_create(&com[k], NULL, producer, NULL);
-	for (k = 0; k < 2; k++)
-		pthread_create(&pro[k], NULL, comsumer, NULL);
-	for (k = 0; k < 3; k++)
-		pthread_join(com[k], NULL);
-	for (k = 0; k < 2; k++)
+	pthread_t pro[PRODUCER_NUM];
+	for (int k = 0; k < PRODUCER_NUM; k++)
+		pthread_create(&pro[k], NULL, producer, NULL);
+	for (int k = 0; k < PRODUCER_NUM; k++)
 		pthread_join(pro[k], NULL);
+    pthread_t con[CONSUMER_NUM];
+	for (int k = 0; k < CONSUMER_NUM; k++)
+		pthread_create(&con[k], NULL, consumer, NULL);
+	for (int k = 0; k < CONSUMER_NUM; k++)
+		pthread_join(con[k], NULL);
+
 	pthread_mutex_destroy(&m1);
 	pthread_mutex_destroy(&m2);
-	sem_destroy(&blank_num);
-	sem_destroy(&product_num);
+	sem_destroy(&sem_pro);
+	sem_destroy(&sem_con);
 	return 0;
 }
