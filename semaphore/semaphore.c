@@ -15,7 +15,9 @@ void *producer(void *argv)
 		sem_wait(&sem_pro);
 		pthread_mutex_lock(&m1);
 		goods++;
-		printf("producer thread id: %d goods number %d\n",(unsigned int)pthread_self(),goods);
+        int sem_number;
+        sem_getvalue(&sem_con,&sem_number);
+		printf("producer thread id: %d goods number: %d sem number: %d\n",(unsigned int)pthread_self(),goods,sem_number);
 		pthread_mutex_unlock(&m1);
 		sem_post(&sem_con);
 		sleep(2);
@@ -28,7 +30,9 @@ void *consumer(void *argv)
 		sem_wait(&sem_con);
 		pthread_mutex_lock(&m2);
 		goods++;
-		printf("consumer thread id: %d goods number %d\n",(unsigned int)pthread_self(),goods);
+        int sem_number;
+        sem_getvalue(&sem_con,&sem_number);
+		printf("consumer thread id: %d goods number: %d sem number: %d\n",(unsigned int)pthread_self(),goods,sem_number);
 		pthread_mutex_unlock(&m2);
 		sem_post(&sem_pro);
 		sleep(2);
@@ -41,17 +45,16 @@ int main(void)
 	sem_init(&sem_con, 0, 0);
 	pthread_mutex_init(&m1, NULL);
 	pthread_mutex_init(&m2, NULL);
-	pthread_t pro[PRODUCER_NUM];
-	for (int k = 0; k < PRODUCER_NUM; k++)
-		pthread_create(&pro[k], NULL, producer, NULL);
-	for (int k = 0; k < PRODUCER_NUM; k++)
-		pthread_join(pro[k], NULL);
     pthread_t con[CONSUMER_NUM];
 	for (int k = 0; k < CONSUMER_NUM; k++)
 		pthread_create(&con[k], NULL, consumer, NULL);
 	for (int k = 0; k < CONSUMER_NUM; k++)
 		pthread_join(con[k], NULL);
-
+	pthread_t pro[PRODUCER_NUM];
+	for (int k = 0; k < PRODUCER_NUM; k++)
+		pthread_create(&pro[k], NULL, producer, NULL);
+	for (int k = 0; k < PRODUCER_NUM; k++)
+		pthread_join(pro[k], NULL);
 	pthread_mutex_destroy(&m1);
 	pthread_mutex_destroy(&m2);
 	sem_destroy(&sem_pro);
